@@ -15,20 +15,11 @@ namespace ExamplePlugin
         public const string PluginName = "AutoSortItems";
         public const string PluginVersion = "1.0.0";
 
-        List<int> Tier1 = new List<int>();
-        List<int> Tier2 = new List<int>();
-        List<int> Tier3 = new List<int>();
-        List<int> Lunar = new List<int>();
-        List<int> Boss = new List<int>();
-        List<int> NoTier = new List<int>();
-        List<int> VoidTier1 = new List<int>();
-        List<int> VoidTier2 = new List<int>();
-        List<int> VoidTier3 = new List<int>();
-        List<int> VoidBoss = new List<int>();
-        List<int> AssignedAtRuntime = new List<int>();
-        List<int> TestList = new List<int>();
+        List<int> tierList = new List<int>();
+        List<int> indexList = new List<int>();
+        List<ItemIndex> tempList = new List<ItemIndex>();
 
-        public void Awake() /////////////////////////////////////////////////////////TODO: Cleanup code, fix mithrix returning items visually is jank, sort within tiers?
+        public void Awake() /////////////////////////////////////////////////////////TODO: Cleanup code, fix mithrix returning items visually is jank
         {                   /////////////////////////////////////////////////////////Also rune if you see this, make sure to change the build action in the csproj
             Log.Init(Logger);
             On.RoR2.UI.ItemInventoryDisplay.UpdateDisplay += (orig, self) =>
@@ -51,74 +42,21 @@ namespace ExamplePlugin
         {
             ClearLists();
             foreach (var item in items)
-            {
-                int yes = (int)ItemCatalog.GetItemDef(item).tier;
-                if (yes > 5 && yes < 9)
-                {
-                    yes -= 6;
-                }
-                if (yes == 9)
-                {
-                    yes = 4;
-                }
-                TestList.Add(yes);
-                //switch (ItemCatalog.GetItemDef(item).tier)
-                //{
-                //    case ItemTier.Tier1:
-                //        Tier1.Add((int)item);
-                //        break;
-                //    case ItemTier.Tier2:
-                //        Tier2.Add((int)item);
-                //        break;
-                //    case ItemTier.Tier3:
-                //        Tier3.Add((int)item);
-                //        break;
-                //    case ItemTier.Lunar:
-                //        Lunar.Add((int)item);
-                //        break;
-                //    case ItemTier.Boss:
-                //        Boss.Add((int)item);
-                //        break;
-                //    case ItemTier.NoTier:
-                //        NoTier.Add((int)item);
-                //        break;
-                //    case ItemTier.VoidTier1:
-                //        VoidTier1.Add((int)item);
-                //        break;
-                //    case ItemTier.VoidTier2:
-                //        VoidTier2.Add((int)item);
-                //        break;
-                //    case ItemTier.VoidTier3:
-                //        VoidTier3.Add((int)item);
-                //        break;
-                //    case ItemTier.VoidBoss:
-                //        VoidBoss.Add((int)item);
-                //        break;
-                //    case ItemTier.AssignedAtRuntime:
-                //        AssignedAtRuntime.Add((int)item);
-                //        break;
-                //    default:
-                //        break;
-                //}
-            }
-            Array.Sort(TestList.ToArray(), items);
-            Array.Reverse(TestList.ToArray());
+                indexList.Add((int)item);
+
+            Array.Sort(indexList.ToArray(), items);
+
+            foreach (var item in items)
+                tierList.Add((int)ItemCatalog.GetItemDef(item).tier);
+
+            Array.Sort(tierList.ToArray(), items);
             return items;
         }
         void ClearLists()
         {
-            TestList.Clear();
-            Tier1.Clear();
-            Tier2.Clear();
-            Tier3.Clear();
-            Lunar.Clear();
-            Boss.Clear();
-            NoTier.Clear();
-            VoidTier1.Clear();
-            VoidTier2.Clear();
-            VoidTier3.Clear();
-            VoidBoss.Clear();
-            AssignedAtRuntime.Clear();
+            tierList.Clear();
+            indexList.Clear();
+            tempList.Clear();
         }
     }
 }
