@@ -1,6 +1,6 @@
 ﻿using BepInEx.Logging;
 
-namespace ExamplePlugin
+namespace AutoSortPlugin
 {
     internal static class Log
     {

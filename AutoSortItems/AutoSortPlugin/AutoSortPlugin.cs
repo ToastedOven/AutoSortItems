@@ -6,11 +6,9 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using System.Linq;
 using BepInEx.Configuration;
-using RiskOfOptions;
-using RiskOfOptions.Options;
 using MonoMod.RuntimeDetour;
 
-namespace ExamplePlugin
+namespace AutoSortPlugin
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     public class AutoSortPlugin : BaseUnityPlugin
@@ -52,11 +50,7 @@ namespace ExamplePlugin
 
             if (BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions"))
             {
-                ModSettingsManager.AddOption(new CheckBoxOption(SeperateScrap, false));
-                ModSettingsManager.AddOption(new CheckBoxOption(SortByTier, false));
-                ModSettingsManager.AddOption(new CheckBoxOption(DescendingTier, false));
-                ModSettingsManager.AddOption(new CheckBoxOption(SortByStackSize, false));
-                ModSettingsManager.AddOption(new CheckBoxOption(DescendingStackSize, false));
+                ROO.rooooooo();
             }
             SeperateScrap.SettingChanged += SettingsChanged;
             SortByTier.SettingChanged += SettingsChanged;
