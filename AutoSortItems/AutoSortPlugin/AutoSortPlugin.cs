@@ -16,7 +16,7 @@ namespace AutoSortPlugin
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Nunchuk";
         public const string PluginName = "AutoSortItems";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.2";
 
         public static ConfigEntry<bool> SeperateScrap;
         public static ConfigEntry<bool> SortByTier;
@@ -66,7 +66,14 @@ namespace AutoSortPlugin
         {
             display = self;
             var temp = self.itemOrder;
-            self.itemOrder = SortItems(self.itemOrder, self.itemOrderCount, self);
+            try
+            {
+                self.itemOrder = SortItems(self.itemOrder, self.itemOrderCount, self);
+            }
+            catch (Exception e)
+            {
+                Debug.Log($"Had issue when sorting items: {e}");
+            }
             orig(self);
             self.itemOrder = temp;
         }
