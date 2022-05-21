@@ -16,7 +16,7 @@ namespace AutoSortPlugin
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Nunchuk";
         public const string PluginName = "AutoSortItems";
-        public const string PluginVersion = "1.0.2";
+        public const string PluginVersion = "1.1.0";
 
         public static ConfigEntry<bool> SeperateScrap;
         public static ConfigEntry<bool> SortByTier;
@@ -30,7 +30,9 @@ namespace AutoSortPlugin
         List<List<ItemIndex>> itemTierLists = new List<List<ItemIndex>>();
         List<ItemIndex> scrapList = new List<ItemIndex>();
         List<ItemIndex> noTierList = new List<ItemIndex>();
+        Dictionary<ItemTier, int> tierMatcher = new Dictionary<ItemTier, int>();
         private static Hook overrideHook;
+        bool initialized = false;
 
         void InitHooks()
         {
@@ -58,8 +60,6 @@ namespace AutoSortPlugin
             SortByStackSize.SettingChanged += SettingsChanged;
             DescendingStackSize.SettingChanged += SettingsChanged;
 
-
-            RoR2.ContentManagement.ContentManager.onContentPacksAssigned += ContentManager_onContentPacksAssigned;
             InitHooks();
         }
         private void UpdateDisplayOverride(Action<RoR2.UI.ItemInventoryDisplay> orig, RoR2.UI.ItemInventoryDisplay self)
@@ -68,6 +68,19 @@ namespace AutoSortPlugin
             var temp = self.itemOrder;
             try
             {
+                if (!initialized)
+                {
+                    initialized = true;
+                    foreach (var tierList in RoR2.ContentManagement.ContentManager.itemTierDefs)
+                    {
+                        if (tierList.tier.ToString() == "NoTier")
+                        {
+                            noTierNum = itemTierLists.Count;
+                        }
+                        tierMatcher.Add(tierList.tier, itemTierLists.Count);
+                        itemTierLists.Add(new List<ItemIndex>());
+                    }
+                }
                 self.itemOrder = SortItems(self.itemOrder, self.itemOrderCount, self);
             }
             catch (Exception e)
@@ -79,17 +92,6 @@ namespace AutoSortPlugin
         }
 
         int noTierNum;
-        private void ContentManager_onContentPacksAssigned(HG.ReadOnlyArray<RoR2.ContentManagement.ReadOnlyContentPack> obj)
-        {
-            foreach (var tierList in RoR2.ContentManagement.ContentManager.itemTierDefs)
-            {
-                if (tierList.tier.ToString() == "NoTier")
-                {
-                    noTierNum = itemTierLists.Count;
-                }
-                itemTierLists.Add(new List<ItemIndex>());
-            }
-        }
 
         private void SettingsChanged(object sender, EventArgs e)
         {
@@ -128,7 +130,7 @@ namespace AutoSortPlugin
                     }
                     else
                     {
-                        itemTierLists[(int)ItemCatalog.GetItemDef(items[i]).tier].Add(items[i]);
+                        itemTierLists[tierMatcher[ItemCatalog.GetItemDef(items[i]).tier]].Add(items[i]);
                     }
                 }
                 else
